@@ -8,5 +8,6 @@ urlpatterns = [
     path('signup/', views.signup_view, name='signup'),
     path('all_albums/', views.all_albums, name='all_albums'),
     path('all_songs/', views.all_songs, name='all_songs'),
+    path('all_artists/', views.all_artists, name='all_artists'),
 
 ]

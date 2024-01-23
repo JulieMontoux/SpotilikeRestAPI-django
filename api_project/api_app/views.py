@@ -129,3 +129,27 @@ def artist_delete(request, id):
     artist = generics.get_object_or_404(Artist, id=id)
     artist.delete()
     return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+#Autres endpoints
+
+# GET - /api/artists
+@api_view(['GET'])
+def artist_list(request):
+    artists = Artist.objects.all()
+    serializer = ArtistSerializer(artists, many=True)
+    return Response(serializer.data)
+
+# GET - /api/users
+@api_view(['GET'])
+def user_list(request):
+    users = User.objects.all()
+    serializer = UserSerializer(users, many=True)
+    return Response(serializer.data)
+
+# GET - /api/songs
+@api_view(['GET'])
+def song_list(request):
+    songs = Song.objects.all()
+    serializer = SongSerializer(songs, many=True)
+    return Response(serializer.data)

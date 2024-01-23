@@ -35,5 +35,14 @@ def all_songs(request):
         if songs_response.status_code == 200:
             songs = songs_response.json()
             all_songs.extend(songs)
+        else:
+            print(f"Failed to fetch songs for album {album_id}. Status code: {songs_response.status_code}")
+    print(all_songs)
 
     return render(request, 'frontend/all_songs.html', {'songs': all_songs})
+
+def all_artists(request):
+    response = requests.get('http://localhost:8000/api/artists/')
+    artists = response.json() if response.status_code == 200 else []
+    return render(request, 'frontend/all_artists.html', {'artists': artists})
+
