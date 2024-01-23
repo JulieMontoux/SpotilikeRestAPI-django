@@ -1,22 +1,25 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Spotilike - Tous les Albums</title>
-    <!-- Assurez-vous d'avoir inclus les fichiers CSS de Tailwind CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-</head>
-<body class="bg-gray-100">
+{% extends './base.html' %}
+{% block title %}Accueil - Spotilike{% endblock %} 
+{%block content %}
 
     <div class="container mx-auto p-8">
         <h2 class="text-3xl font-semibold mb-4">Tous les Albums</h2>
         <ul class="list-disc pl-6">
             {% for album in albums %}
-                <li class="text-gray-800">{{ album.title }}</li>
+                <div class="max-w-sm rounded overflow-hidden shadow-lg">
+                    <img class="w-full" src="{{ album.cover }}" alt="{{ album.title }}">
+                    <div class="px-6 py-4">
+                      <div class="font-bold text-xl mb-2">{{ album.title }}</div>
+                      <p class="text-gray-700 text-base">
+                        {{ album.artist }}
+                      </p>
+                    </div>
+                    <div class="px-6 pt-4 pb-2">
+                      <span class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">{{ album.release_date }}</span>
+                    </div>
+                  </div>
             {% endfor %}
         </ul>
     </div>
+    {% endblock %}
 
-</body>
-</html>
