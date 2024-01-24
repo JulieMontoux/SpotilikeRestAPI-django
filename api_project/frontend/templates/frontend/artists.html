@@ -1,0 +1,22 @@
+{% extends './base.html' %}
+{% block title %}Tous les Artistes - Spotilike{% endblock %} 
+
+{% block content %}
+<div class="container mx-auto p-8">
+    <h2 class="text-3xl font-semibold mb-4">Tous les Artistes</h2>
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        {% for artist in artists %}
+        <div class="bg-gray-800 rounded-lg overflow-hidden shadow-md text-white">
+            <img class="w-full h-48 object-cover" src="{{ artist.avatar }}" alt="{{ artist.name }}">
+            <div class="px-6 py-4">
+                <div class="font-bold text-xl mb-2">{{ artist.name }}</div>
+                <p class="text-gray-400">{{ artist.genre }}</p>
+            </div>
+            <a href="{% url 'artist_detail' artist_id=artist.id %}" class="block bg-gray-600 text-white py-2 px-4 hover:bg-gray-500">
+                <p class="text-blue-400">Détails...</p>
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

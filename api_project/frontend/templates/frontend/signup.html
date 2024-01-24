@@ -1,32 +1,41 @@
 {% extends './base.html' %}
 {% block title %}Accueil - Spotilike{% endblock %} 
-{%block content %}
-        <h1 class="text-4xl font-bold mb-6">Inscription</h1>
+
+{% block content %}
+    <div class="container mx-auto p-8">
+        <h1 class="text-4xl font-bold mb-6 text-gray-900 text-center">Inscription</h1>
 
         <!-- Formulaire d'Inscription -->
-        <form action="{% url 'user-signin' %}" method="post" class="max-w-md mx-auto bg-white p-8 rounded shadow-md">
+        <form action="{% url 'user-signin' %}" method="post" class="max-w-md mx-auto bg-gray-800 p-8 rounded shadow-md">
             {% csrf_token %}
 
             <!-- Champs du formulaire -->
             <div class="mb-4">
-                <label for="username" class="block text-gray-600 text-sm font-semibold mb-2">Nom d'utilisateur :</label>
-                <input type="text" id="username" name="username" class="w-full p-2 border border-gray-300 rounded">
+                <label for="username" class="block text-gray-300 text-sm font-semibold mb-2">Nom d'utilisateur :</label>
+                <input type="text" id="username" name="username" class="w-full p-2 border border-gray-600 rounded bg-gray-700 text-white">
             </div>
 
             <div class="mb-4">
-                <label for="email" class="block text-gray-600 text-sm font-semibold mb-2">Email :</label>
-                <input type="email" id="email" name="email" class="w-full p-2 border border-gray-300 rounded">
+                <label for="email" class="block text-gray-300 text-sm font-semibold mb-2">Email :</label>
+                <input type="email" id="email" name="email" class="w-full p-2 border border-gray-600 rounded bg-gray-700 text-white">
             </div>
 
             <div class="mb-6">
-                <label for="password" class="block text-gray-600 text-sm font-semibold mb-2">Mot de passe :</label>
-                <input type="password" id="password" name="password" class="w-full p-2 border border-gray-300 rounded">
+                <label for="password" class="block text-gray-300 text-sm font-semibold mb-2">Mot de passe :</label>
+                <input type="password" id="password" name="password" class="w-full p-2 border border-gray-600 rounded bg-gray-700 text-white">
             </div>
 
             <!-- Bouton d'Inscription -->
-            <button type="submit" class="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600">Inscription</button>
+            <button type="submit" class="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 block mx-auto">Inscription</button>
+            {% if messages %}
+                <ul class="messages">
+                {% for message in messages %}
+                    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                {% endfor %}
+                </ul>
+            {% endif %}
         </form>
 
-        <p class="mt-4 text-gray-600">Déjà un compte ? <a href="{% url 'login' %}" class="text-green-500">Connectez-vous</a></p>
-        {% endblock %}
-
+        <p class="mt-4 text-gray-300 text-center">Déjà un compte ? <a href="{% url 'login' %}" class="text-green-500">Connectez-vous</a></p>
+    </div>
+{% endblock %}

@@ -1,0 +1,17 @@
+{% extends './base.html' %}
+{% block title %}Détails de l'Album - Spotilike{% endblock %} 
+{% block content %}
+    <div class="container mx-auto p-8">
+        <h2 class="text-3xl font-semibold mb-4">{{ album.title }}</h2>
+        <img class="w-full mb-4" src="{{ album.cover }}" alt="{{ album.title }}">
+        <p class="text-gray-600">{{ album.release_date }}</p>
+        <h3 class="text-xl font-semibold mt-4 mb-2">Artiste</h3>
+        <p class="text-gray-600">{{ album.artist.name }}</p>
+        <h3 class="text-xl font-semibold mt-4 mb-2">Morceaux</h3>
+        <ul class="list-disc pl-6">
+            {% for song in album.song_set.all %}
+                <li>{{ song.title }} - {{ song.duration }} seconds</li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endblock %}

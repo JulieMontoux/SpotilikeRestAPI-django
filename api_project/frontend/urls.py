@@ -1,13 +1,15 @@
 from django.urls import path
 from . import views
+from api_app import views as v
 
 urlpatterns = [
     path('', views.base, name='base'),
     path('index/', views.index, name='index'),
     path('login/', views.login_view, name='login'),
     path('signup/', views.signup_view, name='signup'),
-    path('all_albums/', views.all_albums, name='all_albums'),
-    path('all_songs/', views.all_songs, name='all_songs'),
-    path('all_artists/', views.all_artists, name='all_artists'),
+    path('albums/', views.all_albums, name='albums'),
+    path('artists/', views.all_artists, name='artists'),
+    path('album_detail/<int:album_id>/', views.album_detail, name='album_detail'),
+    path('artist_detail/<int:artist_id>/', views.artist_detail, name='artist_detail'),
 
 ]
