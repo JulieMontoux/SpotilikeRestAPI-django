@@ -16,28 +16,16 @@ class Album(models.Model):
     title = models.CharField(max_length=255)
     cover = models.CharField(max_length=255)
     release_date = models.DateField()
-    artist = models.ForeignKey(Artist, on_delete=models.CASCADE)
+    artist_id = models.ManyToManyField(Artist)
 
 class Song(models.Model):
     title = models.CharField(max_length=255)
     duration = models.IntegerField()
-    genre = models.ForeignKey(Genre, on_delete=models.CASCADE)
-    album = models.ForeignKey(Album, on_delete=models.CASCADE)
-    artist = models.ForeignKey(Artist, on_delete=models.CASCADE)
+    album_id = models.ForeignKey(Album, on_delete=models.CASCADE)
+    artist_id = models.ForeignKey(Artist, on_delete=models.CASCADE)
+    genre_id = models.ManyToManyField(Genre)
 
 class User(models.Model):
     username = models.CharField(max_length=255)
-    password = models.CharField(max_length=255)
     email = models.EmailField()
-
-
-# Table d'association entre Genre et Song (many-to-many)
-class GenreSong(models.Model):
-    genre = models.ForeignKey(Genre, on_delete=models.CASCADE)
-    song = models.ForeignKey(Song, on_delete=models.CASCADE)
-
-
-# Table d'association entre Artist et Album (many-to-many)
-class ArtistAlbum(models.Model):
-    artist = models.ForeignKey(Artist, on_delete=models.CASCADE)
-    album = models.ForeignKey(Album, on_delete=models.CASCADE)
+    password = models.CharField(max_length=255)
