@@ -1,15 +1,26 @@
 {% extends './base.html' %}
 {% block title %}Détails de l'Artiste - Spotilike{% endblock %} 
 {% block content %}
-    <div class="container mx-auto p-8">
-        <h2 class="text-3xl font-semibold mb-4">{{ artist.name }}</h2>
-        <img class="w-80 mb-4" src="{{ artist.avatar }}" alt="{{ artist.name }}">
+<div class="container mx-auto p-8 grid grid-cols-2 gap-8">
+    <div>
+        <h2 class="text-3xl font-semibold mb-4">
+            <a href="{% url 'artist_detail' artist.id %}">{{ artist.name }}</a>
+        </h2>
         <p class="text-gray-600">{{ artist.biography }}</p>
         <h3 class="text-xl font-semibold mt-4 mb-2">Albums</h3>
-        <ul class="list-disc pl-6">
+        <div class="grid grid-cols-3 gap-4">
             {% for album in artist.album_set.all %}
-                <li>{{ album.title }} - {{ album.release_date }}</li>
+                <div>
+                    <a href="{% url 'album_detail' album_id=album.id %}">
+                        <img class="w-full mb-2" src="{{ album.cover }}" alt="{{ album.title }}">
+                        <p class="text-gray-800 text-sm text-center">{{ album.title }}</p>
+                    </a>
+                </div>
             {% endfor %}
-        </ul>
+        </div>
     </div>
+    <div>
+        <img class="w-full mb-4" src="{{ artist.avatar }}" alt="{{ artist.name }}">
+    </div>
+</div>
 {% endblock %}

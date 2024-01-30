@@ -7,10 +7,10 @@
     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         {% for album in albums %}
             <div class="bg-gray-800 rounded-lg overflow-hidden shadow-md text-white">
-                <img class="w-full h-48 object-cover" src="../{{ album.cover }}" alt="{{ album.title }}">
+                <img class="w-full h-48 object-cover" src="{{ album.cover }}" alt="{{ album.title }}">
                 <div class="px-6 py-4">
                     <div class="font-bold text-xl mb-2">{{ album.title }}</div>
-                    <p class="text-gray-400">{{ album.artist }}</p>
+                    <p class="text-gray-400">{{ album.artist.name }}</p>
                 </div>
                 <a href="{% url 'album_detail' album_id=album.id %}" class="block bg-gray-600 text-white py-2 px-4 hover:bg-gray-500">
                     <p class="text-blue-400">Détails...</p>

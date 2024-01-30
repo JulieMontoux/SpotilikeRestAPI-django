@@ -40,7 +40,7 @@ def genre_list(request):
 # GET - /api/artists/:id/songs
 @api_view(['GET'])
 def artist_songs(request, id):
-    songs = Song.objects.filter(artist_id=id)
+    songs = Song.objects.filter(artists=id)
     serializer = SongSerializer(songs, many=True)
     return Response(serializer.data)
 

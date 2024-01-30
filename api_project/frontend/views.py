@@ -69,7 +69,7 @@ def user_login(request):
             if user is not None:
                 login(request, user)
                 messages.success(request, 'Connexion réussie!')
-                return redirect('home')  # Remplacez 'home' par le nom de votre page d'accueil
+                return redirect('index')
             else:
                 messages.error(request, 'Nom d\'utilisateur ou mot de passe incorrect.')
         else:
