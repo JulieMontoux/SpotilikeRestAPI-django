@@ -5,24 +5,26 @@
     <div class="w-1/2 pr-8">
         <img class="w-full mb-4" src="{{ album.cover }}" alt="{{ album.title }}">
     </div>
-    <div class="w-1/2">
+    <div class="w-1/3">
         <h2 class="text-3xl font-semibold mb-4">{{ album.title }}</h2>
         <p class="text-gray-600">{{ album.release_date }}</p>
-        <h3 class="text-xl font-semibold mt-4 mb-2">Artiste</h3>
-        <div class="grid items-center mb-4 text-center w-1/3">
-            <a href="{% url 'artist_detail'  artist_id=album.artist.id %}">
-                <img class="w-full mr-4" src="{{ album.artist.avatar }}" alt="{{ album.artist.name }}">
-            </a>
-            <p class="text-gray-600 text-center">
-                <a href="{% url 'artist_detail'  artist_id=album.artist.id %}">{{ album.artist.name }}</a>
-            </p>
-        </div>
         <h3 class="text-xl font-semibold mt-4 mb-2">Morceaux</h3>
         <ul class="list-disc pl-6">
             {% for song in album.song_set.all %}
                 <li>{{ song.title }} - <span class="duration">{{ song.duration }}</span></li>
             {% endfor %}
         </ul>
+    </div>
+    <div class="w-1/4">
+        <h3 class="text-xl font-semibold mt-4 mb-2">Artiste</h3>
+        <div class="grid-cols-1 text-center">
+            <a href="{% url 'artist_detail' artist_id=album.artist.id %}">
+                <img class="w-full mb-2" src="{{ album.artist.avatar }}" alt="{{ album.artist.name }}">
+            </a>
+            <p class="text-gray-600">
+                <a href="{% url 'artist_detail' artist_id=album.artist.id %}">{{ album.artist.name }}</a>
+            </p>
+        </div>
     </div>
 </div>
 
