@@ -1,18 +1,19 @@
 {% extends './base.html' %}
-{% block title %}Tous les Artistes - Spotilike{% endblock %} 
+{% block title %}Tous les Artistes - Spotilike{% endblock %}
 
 {% block content %}
 <div class="container mx-auto p-8">
-    <h2 class="text-3xl font-semibold mb-4 text-gray-900">Tous les Artistes</h2>
+    <h2 class="text-3xl font-semibold mb-4 text-green-500 dark:text-green-300">Tous les Artistes</h2>
     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         {% for artist in artists %}
-        <a href="{% url 'artist_detail' artist_id=artist.id %}" class="bg-gray-100 rounded-lg overflow-hidden shadow-neo p-4 transition duration-300 transform hover:shadow-lg hover:scale-105">
+        <a href="{% url 'artist_detail' artist_id=artist.id %}" class="bg-black dark:bg-gray-800 rounded-lg overflow-hidden shadow-neo p-4 transition duration-300 transform hover:shadow-lg hover:scale-105">
             <img class="w-full h-48 object-cover mb-4 rounded-md" src="{{ artist.avatar }}" alt="{{ artist.name }}">
             <div class="px-6 py-4 text-center">
-                <div class="font-bold text-xl mb-2 text-gray-900">{{ artist.name }}</div>
+                <div class="font-bold text-xl mb-2 text-green-500 dark:text-green-300">{{ artist.name }}</div>
             </div>
         </a>
         {% endfor %}
     </div>
 </div>
 {% endblock %}
+

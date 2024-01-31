@@ -36,6 +36,7 @@ D'un point de vue pédagogique, il permet d'apprendre à créer et exploiter une
 
 3. **Appliquer les Migrations :**
    - Appliquez les migrations pour créer la base de données : `python manage.py migrate`
+   - Charger les images en dur : `python manage.py collectstatic`
 
 4. **Lancement du Serveur de Développement :**
    - Changer de dossier : `cd api_project`

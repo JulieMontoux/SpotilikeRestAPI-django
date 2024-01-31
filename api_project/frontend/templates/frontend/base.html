@@ -3,24 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% load static %} 
     <title>{% block title %}Spotilike{% endblock %}</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
 <body class="bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-100 font-sans">
 
     <!-- Navbar -->
-    <nav class="bg-gray-200 dark:bg-gray-700 p-4 shadow-lg">
+    <nav class="bg-black dark:bg-gray-800 p-4 shadow-lg">
         <div class="container mx-auto flex justify-between items-center">
-            <a href="/" class="text-gray-900 dark:text-gray-100 text-xl font-bold">Spotilike</a>
+            <div class="flex items-center space-x-4">
+                <img src="{% static 'images/logo_spotilike.png' %}" alt="Spotilike Logo" class="w-16 h-16 rounded-full mb-4 border-2 border-gray-300 dark:border-gray-600 p-1">
+                <a href="/" class="text-green-500 dark:text-green-300 text-xl font-bold hover:scale-105 transition duration-300 transform">Spotilike</a>
+            </div>
 
             <div class="space-x-4">
-                <a href="/albums/" class="text-gray-900 dark:text-gray-100">Albums</a>
-                <a href="/artists/" class="text-gray-900 dark:text-gray-100">Artistes</a>
+                <a href="/albums/" class="text-green-500 dark:text-green-300 hover:scale-105 transition duration-300 transform">Albums</a>
+                <a href="/artists/" class="text-green-500 dark:text-green-300 hover:scale-105 transition duration-300 transform">Artistes</a>
             </div>
 
             <div class="space-x-4 flex items-center">
-                <a href="{% url 'login' %}" class="bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600 transition duration-300">Connexion</a>
-                <a href="{% url 'signup' %}" class="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition duration-300">Inscription</a>
+                <a href="{% url 'login' %}" class="bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600 transition duration-300 transform hover:scale-105">Connexion</a>
+                <a href="{% url 'signup' %}" class="bg-black text-white py-2 px-4 rounded hover:bg-gray-700 transition duration-300 transform hover:scale-105">Inscription</a>
             </div>
         </div>
     </nav>
