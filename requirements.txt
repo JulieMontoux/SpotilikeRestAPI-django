@@ -6,6 +6,7 @@ charset-normalizer==3.3.2
 click==8.1.7
 Django==5.0.1
 djangorestframework==3.14.0
+djangorestframework-jwt==1.11.0
 dnspython==2.5.0
 drf-yasg==1.21.7
 email-validator==2.1.0.post1
