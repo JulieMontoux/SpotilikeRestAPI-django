@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from .models import Genre, Artist, Album, Song, User
+
 class GenreSerializer(serializers.ModelSerializer):
     class Meta:
         model = Genre
