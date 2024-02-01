@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
-from .models import Album, Genre, Artist, Song, Utilisateur
+from .models import Album, Genre, Artist, Song, Utilisateur, UtilisateurManager
 from .serializers import (
     AlbumSerializer, GenreSerializer, ArtistSerializer,
     SongSerializer, UserSerializer
@@ -64,16 +64,13 @@ def artist_songs(request, id):
 # POST - /api/users/signin
 @api_view(['POST'])
 def user_signin(request):
-    serializer = UserSerializer(data=request.data)
-    if serializer.is_valid():
-        serializer.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-# POST - /api/users/login
-# @api_view(['POST'])
-# def user_login(request):
-#     return Response({'message': 'User login successful'}, status=status.HTTP_200_OK)
+    user = Utilisateur.objects.create_superuser(
+        email=request.data.get('email'),
+        username=request.data.get('username'),
+        password=request.data.get('password')
+    )
+    serializer = UserSerializer(user)
+    return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 # POST - /api/albums
 @api_view(['POST'])
