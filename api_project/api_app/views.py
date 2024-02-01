@@ -217,7 +217,7 @@ def user_login(request):
             access_token = str(refresh.access_token)
             user_info = {
                 'email': user.email,
-                'name': user.username,
+                'username': user.username,
             }
             return Response({'access_token': access_token, 'user': user_info}, status=status.HTTP_200_OK)
         else:

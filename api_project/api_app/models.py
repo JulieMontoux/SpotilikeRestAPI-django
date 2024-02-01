@@ -40,38 +40,6 @@ class Song(models.Model):
     def __str__(self):
         return self.title
 
-# class UserManager(BaseUserManager):
-#     def create_user(self, email, username, password=None, **extra_fields):
-#         if not email:
-#             raise ValueError('The Email field must be set')
-#         email = self.normalize_email(email)
-#         user = self.model(email=email, username=username, **extra_fields)
-#         user.set_password(password)
-#         user.save(using=self._db)
-#         return user
-
-#     def create_superuser(self, email, username, password=None, **extra_fields):
-#         extra_fields.setdefault('is_staff', True)
-#         extra_fields.setdefault('is_superuser', True)
-
-#         return self.create_user(email, username, password, **extra_fields)
-
-
-# class People(AbstractBaseUser, PermissionsMixin):
-#     username = models.CharField(max_length=50, unique= True)
-#     email = models.EmailField()
-#     password = models.CharField(max_length=128)
-#     is_active = models.BooleanField(default=True)
-#     is_staff = models.BooleanField(default=False)
-    
-#     objects = UserManager()
-
-#     USERNAME_FIELD = 'username'
-#     REQUIRED_FIELDS = ['email']
-
-#     def __str__(self):
-#         return self.username
-    
 class UtilisateurManager(BaseUserManager):
     def create_user(self, email, username, password=None, **extra_fields):
         if not email:
@@ -79,6 +47,9 @@ class UtilisateurManager(BaseUserManager):
         email = self.normalize_email(email)
         user = self.model(email=email, username=username, **extra_fields)
         user.set_password(password)
+        extra_fields.setdefault('is_staff', False)
+        extra_fields.setdefault('is_active', True)
+        extra_fields.setdefault('is_superuser', True)
         user.save(using=self._db)
         return user
 
@@ -94,6 +65,7 @@ class Utilisateur(AbstractBaseUser, PermissionsMixin):
     password = models.CharField(max_length=128)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=True)
+    is_superuser = models.BooleanField(default=True)
 
     objects = UtilisateurManager()
 

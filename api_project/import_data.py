@@ -2,6 +2,7 @@ import os
 import django
 import json
 from django.db import transaction
+from django.contrib.auth.hashers import make_password
 
 # Spécifiez le fichier de paramètres du projet Django
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "api_project.settings")
@@ -43,7 +44,7 @@ for artist_data in data['artist']:
 for user_data in data['users']:
     username = user_data['username']
     email = user_data['email']
-    password = user_data['password']
+    password = make_password(user_data['password'])
     user_instance = create_or_get(Utilisateur, defaults={'email': email, 'password': password}, username=username)
 
 
