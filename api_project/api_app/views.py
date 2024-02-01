@@ -24,7 +24,7 @@ from django.contrib.auth.models import User
 from rest_framework_jwt.views import ObtainJSONWebToken
 from django.contrib.auth.hashers import make_password
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView, TokenVerifyView
-
+from rest_framework.decorators import permission_classes
 
 # GET - /api/albums
 @api_view(['GET'])
@@ -126,6 +126,7 @@ def genre_update(request, id):
 
 # DELETE - /api/users/:id
 @api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
 def user_delete(request, id):
     user = generics.get_object_or_404(Utilisateur, id=id)
     user.delete()
@@ -133,6 +134,7 @@ def user_delete(request, id):
 
 # DELETE - /api/albums/:id
 @api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
 def album_delete(request, id):
     album = generics.get_object_or_404(Album, id=id)
     album.delete()
@@ -140,6 +142,7 @@ def album_delete(request, id):
 
 # DELETE - /api/artists/:id
 @api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
 def artist_delete(request, id):
     artist = generics.get_object_or_404(Artist, id=id)
     artist.delete()
