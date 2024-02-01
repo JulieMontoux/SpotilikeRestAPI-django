@@ -3,7 +3,7 @@ from . import views
 from api_app import views as v
 
 urlpatterns = [
-    path('/base', views.base, name='base'),
+    path('base', views.base, name='base'),
     path('', views.index, name='index'),
     path('login/', views.login_view, name='login'),
     path('signup/', views.signup_view, name='signup'),
