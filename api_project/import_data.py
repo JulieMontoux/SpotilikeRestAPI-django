@@ -7,7 +7,7 @@ from django.db import transaction
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "api_project.settings")
 django.setup()
 
-from api_app.models import Genre, Artist, Album, Song, User
+from api_app.models import Genre, Artist, Album, Song, Utilisateur
 
 with open('data.json', 'r') as f:
     data = json.load(f)
@@ -40,11 +40,11 @@ for artist_data in data['artist']:
     artist_instance = create_or_get(Artist, defaults={'avatar': avatar, 'biography': biography}, name=name)
 
 # Insérer les utilisateurs
-for user_data in data['user']:
+for user_data in data['users']:
     username = user_data['username']
     email = user_data['email']
     password = user_data['password']
-    user_instance = create_or_get(User, defaults={'email': email, 'password': password}, username=username)
+    user_instance = create_or_get(Utilisateur, defaults={'email': email, 'password': password}, username=username)
 
 
 # Insérer les albums

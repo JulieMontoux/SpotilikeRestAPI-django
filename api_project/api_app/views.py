@@ -4,43 +4,26 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
-from .models import Album, Genre, Artist, Song, User
+from .models import Album, Genre, Artist, Song, Utilisateur
 from .serializers import (
     AlbumSerializer, GenreSerializer, ArtistSerializer,
     SongSerializer, UserSerializer
 )
-from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework_jwt.settings import api_settings
-from rest_framework_jwt.views import obtain_jwt_token
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework.permissions import IsAuthenticated
-from rest_framework_jwt.serializers import VerifyJSONWebTokenSerializer
-from rest_framework_jwt.utils import jwt_response_payload_handler
-
-from rest_framework.views import APIView
+from rest_framework_simplejwt.tokens import RefreshToken
+from django.contrib.auth import authenticate, login
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework_jwt.settings import api_settings
 from django.contrib.auth.models import User
 from rest_framework_jwt.views import ObtainJSONWebToken
-
-class CustomJSONWebToken(ObtainJSONWebToken):
-    def post(self, request, *args, **kwargs):
-        self.request = request  
-        response = super().post(request, *args, **kwargs)
-        if response.status_code == status.HTTP_200_OK:
-            user = User.objects.get(username=request.data['username'])
-            jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER
-            jwt_encode_handler = api_settings.JWT_ENCODE_HANDLER
-            payload = jwt_payload_handler(user)
-            token = jwt_encode_handler(payload)
-            response.data['token'] = token
-
-        return response
+from django.contrib.auth.hashers import make_password
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView, TokenVerifyView
 
 
 # GET - /api/albums
@@ -87,32 +70,10 @@ def user_signin(request):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-# Configuration de l'authentification JWT
-jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER
-jwt_encode_handler = api_settings.JWT_ENCODE_HANDLER
-
 # POST - /api/users/login
-@api_view(['POST'])
-def user_login(request):
-    # Extraire les données de la requête
-    username = request.data.get('username')
-    password = request.data.get('password')
-
-    # Vérifier si le nom d'utilisateur et le mot de passe sont présents
-    if username is None or password is None:
-        return Response({'error': 'Veuillez fournir un nom d\'utilisateur et un mot de passe'},
-                        status=status.HTTP_400_BAD_REQUEST)
-
-    # Utiliser la vue obtain_jwt_token pour obtenir le token
-    response = obtain_jwt_token(request)
-    
-    # Vérifier si l'authentification a réussi
-    if response.status_code == status.HTTP_200_OK:
-        # Ajouter des informations supplémentaires au résultat si nécessaire
-        user = User.objects.get(username=username)
-        # Ajouter d'autres informations à la réponse si nécessaire
-
-    return response
+# @api_view(['POST'])
+# def user_login(request):
+#     return Response({'message': 'User login successful'}, status=status.HTTP_200_OK)
 
 # POST - /api/albums
 @api_view(['POST'])
@@ -166,7 +127,7 @@ def genre_update(request, id):
 # DELETE - /api/users/:id
 @api_view(['DELETE'])
 def user_delete(request, id):
-    user = generics.get_object_or_404(User, id=id)
+    user = generics.get_object_or_404(Utilisateur, id=id)
     user.delete()
     return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -197,7 +158,7 @@ def artist_list(request):
 # GET - /api/users
 @api_view(['GET'])
 def user_list(request):
-    users = User.objects.all()
+    users = Utilisateur.objects.all()
     serializer = UserSerializer(users, many=True)
     return Response(serializer.data)
 
@@ -207,3 +168,59 @@ def song_list(request):
     songs = Song.objects.all()
     serializer = SongSerializer(songs, many=True)
     return Response(serializer.data)
+
+@api_view(['POST'])
+def register(request):
+    if request.method == 'POST':
+        password = request.data.get('password')
+        hashed_password = make_password(password)
+        request.data['password'] = hashed_password
+
+        serializer = UserSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class MyTokenObtainPairView(ObtainJSONWebToken):
+    serializer_class = UserSerializer
+
+    def post(self, request, *args, **kwargs):
+        response = super().post(request, *args, **kwargs)
+        user = self.user
+        if user.is_active:
+            refresh_token = response.data['refresh']
+            access_token = response.data['access']
+
+            custom_response_data = {
+                'refresh_token': refresh_token,
+                'access_token': access_token,
+                'username': user.username,
+                'email': user.email,
+            }
+
+            return Response(custom_response_data)
+        else:
+            return Response({'message': 'User is not active'}, status=status.HTTP_401_UNAUTHORIZED)
+        
+@api_view(['POST'])
+def user_login(request):
+    if request.method == 'POST':
+        username = request.data.get('username')
+        password = request.data.get('password')
+        user = authenticate(request, username=username, password=password)
+        print(user)
+        if user is not None:
+            login(request, user)
+            refresh = RefreshToken.for_user(user)
+            access_token = str(refresh.access_token)
+            user_info = {
+                'email': user.email,
+                'name': user.username,
+            }
+            return Response({'access_token': access_token, 'user': user_info}, status=status.HTTP_200_OK)
+        else:
+            return Response({'message': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
+    else:
+        return Response({'message': 'Invalid request method'}, status=status.HTTP_400_BAD_REQUEST)

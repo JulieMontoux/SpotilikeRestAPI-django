@@ -6,6 +6,7 @@ from .views import (
     artist_update, album_update, genre_update,
     user_delete, album_delete, artist_delete, artist_list, user_list, song_list
 )
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView, TokenVerifyView
 
 urlpatterns = [
     path('albums/', album_list, name='album-list'),
@@ -26,5 +27,8 @@ urlpatterns = [
     path('users/login/', user_login, name='user-login'),
     path('users/<int:id>/delete/', user_delete, name='user-delete'),
     path('songs/', song_list, name='song-list'),
-
+    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('api/token/verify/', TokenVerifyView.as_view(), name='token_verify'),
+   
 ]

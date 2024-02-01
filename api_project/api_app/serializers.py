@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Genre, Artist, Album, Song, User
+from .models import *
 
 class GenreSerializer(serializers.ModelSerializer):
     class Meta:
@@ -23,5 +23,5 @@ class SongSerializer(serializers.ModelSerializer):
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
-        model = User
+        model = Utilisateur
         fields = '__all__'
