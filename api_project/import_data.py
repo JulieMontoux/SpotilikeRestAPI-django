@@ -56,12 +56,12 @@ for album_data in data['album']:
     artist_instance = create_or_get(Artist, name=album_data['artist'])
     album_instance = create_or_get(Album, defaults={'cover': cover, 'release_date': release_date, 'artist': artist_instance}, title=title)
 
+# Insérer les morceaux
 for song_data in data['song']:
     artist_instance = create_or_get(Artist, name=song_data['artist'])
     album_instance = create_or_get(Album, title=song_data['album'], artist=artist_instance)
     genre_instance = create_or_get(Genre, title=song_data['genres'])
 
-    # Création de la chanson sans les genres
     song_instance, created = Song.objects.get_or_create(
         title=song_data['title'],
         duration=song_data['duration'],

@@ -25,6 +25,8 @@ from rest_framework_jwt.views import ObtainJSONWebToken
 from django.contrib.auth.hashers import make_password
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView, TokenVerifyView
 from rest_framework.decorators import permission_classes
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
 
 # GET - /api/albums
 @api_view(['GET'])
@@ -62,6 +64,7 @@ def artist_songs(request, id):
     return Response(serializer.data)
 
 # POST - /api/users/signin
+@swagger_auto_schema(method='post', request_body=UserSerializer)
 @api_view(['POST'])
 def user_signin(request):
     user = Utilisateur.objects.create_superuser(
@@ -72,16 +75,17 @@ def user_signin(request):
     serializer = UserSerializer(user)
     return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-# POST - /api/albums
+@swagger_auto_schema(method='post', request_body=AlbumSerializer)
 @api_view(['POST'])
 def album_create(request):
-    serializer = AlbumSerializer(data=request.data)
+    serializer = AlbumSerializer(data=request.data)    
     if serializer.is_valid():
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 # POST - /api/albums/:id/songs
+@swagger_auto_schema(method='post', request_body=SongSerializer)
 @api_view(['POST'])
 def song_create(request, id):
     album = generics.get_object_or_404(Album, id=id)
@@ -92,6 +96,7 @@ def song_create(request, id):
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 # PUT - /api/artists/:id
+@swagger_auto_schema(method='put', request_body=ArtistSerializer)
 @api_view(['PUT'])
 def artist_update(request, id):
     artist = generics.get_object_or_404(Artist, id=id)
@@ -102,6 +107,7 @@ def artist_update(request, id):
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 # PUT - /api/albums/:id
+@swagger_auto_schema(method='put', request_body=AlbumSerializer)
 @api_view(['PUT'])
 def album_update(request, id):
     album = generics.get_object_or_404(Album, id=id)
@@ -112,6 +118,7 @@ def album_update(request, id):
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 # PUT - /api/genres/:id
+@swagger_auto_schema(method='put', request_body=GenreSerializer)
 @api_view(['PUT'])
 def genre_update(request, id):
     genre = generics.get_object_or_404(Genre, id=id)
@@ -122,24 +129,24 @@ def genre_update(request, id):
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 # DELETE - /api/users/:id
-@api_view(['DELETE'])
 @permission_classes([IsAuthenticated])
+@api_view(['DELETE'])
 def user_delete(request, id):
     user = generics.get_object_or_404(Utilisateur, id=id)
     user.delete()
     return Response(status=status.HTTP_204_NO_CONTENT)
 
 # DELETE - /api/albums/:id
-@api_view(['DELETE'])
 @permission_classes([IsAuthenticated])
+@api_view(['DELETE'])
 def album_delete(request, id):
     album = generics.get_object_or_404(Album, id=id)
     album.delete()
     return Response(status=status.HTTP_204_NO_CONTENT)
 
 # DELETE - /api/artists/:id
-@api_view(['DELETE'])
 @permission_classes([IsAuthenticated])
+@api_view(['DELETE'])
 def artist_delete(request, id):
     artist = generics.get_object_or_404(Artist, id=id)
     artist.delete()
@@ -169,20 +176,6 @@ def song_list(request):
     serializer = SongSerializer(songs, many=True)
     return Response(serializer.data)
 
-@api_view(['POST'])
-def register(request):
-    if request.method == 'POST':
-        password = request.data.get('password')
-        hashed_password = make_password(password)
-        request.data['password'] = hashed_password
-
-        serializer = UserSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
 class MyTokenObtainPairView(ObtainJSONWebToken):
     serializer_class = UserSerializer
 
@@ -203,7 +196,20 @@ class MyTokenObtainPairView(ObtainJSONWebToken):
             return Response(custom_response_data)
         else:
             return Response({'message': 'User is not active'}, status=status.HTTP_401_UNAUTHORIZED)
-        
+
+
+@swagger_auto_schema(
+    method='post',
+    request_body=openapi.Schema(
+        type=openapi.TYPE_OBJECT,
+        required=['username', 'password'],
+        properties={
+            'username': openapi.Schema(type=openapi.TYPE_STRING),
+            'password': openapi.Schema(type=openapi.TYPE_STRING, format=openapi.FORMAT_PASSWORD),
+        }
+    ),
+    responses={200: openapi.Response('Successful login')}
+)
 @api_view(['POST'])
 def user_login(request):
     if request.method == 'POST':
