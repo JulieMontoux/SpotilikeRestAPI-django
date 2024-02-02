@@ -49,7 +49,6 @@ class UtilisateurManager(BaseUserManager):
         user.set_password(password)
         extra_fields.setdefault('is_staff', False)
         extra_fields.setdefault('is_active', True)
-        extra_fields.setdefault('is_superuser', True)
         user.save(using=self._db)
         return user
 
@@ -57,7 +56,14 @@ class UtilisateurManager(BaseUserManager):
         extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('is_superuser', True)
 
-        return self.create_user(email, username, password, **extra_fields)
+        user = self.create_user(email, username, password, **extra_fields)
+        user.is_staff = True
+        user.is_superuser = True
+
+        user.user_permissions.set(Permission.objects.all())
+
+        user.save(using=self._db)
+        return user
 
 class Utilisateur(AbstractBaseUser, PermissionsMixin):
     username = models.CharField(max_length=50, unique=True)

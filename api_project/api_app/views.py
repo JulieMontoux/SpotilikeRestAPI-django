@@ -1,32 +1,28 @@
-from django.http import HttpRequest
-from rest_framework.decorators import api_view
+from rest_framework.decorators import (
+    api_view, 
+    authentication_classes, 
+    permission_classes
+)
 from rest_framework.response import Response
-from rest_framework import status
-from rest_framework import generics
+from rest_framework import status, generics
 from rest_framework.permissions import IsAuthenticated
 from .models import Album, Genre, Artist, Song, Utilisateur, UtilisateurManager
 from .serializers import (
     AlbumSerializer, GenreSerializer, ArtistSerializer,
     SongSerializer, UserSerializer
 )
-from rest_framework.response import Response
-from rest_framework import status
-from rest_framework_jwt.settings import api_settings
-from rest_framework.decorators import api_view
-from rest_framework.response import Response
-from rest_framework import status
-from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.tokens import AccessToken
 from django.contrib.auth import authenticate, login
-from rest_framework.response import Response
-from rest_framework import status
-from rest_framework_jwt.settings import api_settings
 from django.contrib.auth.models import User
 from rest_framework_jwt.views import ObtainJSONWebToken
 from django.contrib.auth.hashers import make_password
-from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView, TokenVerifyView
-from rest_framework.decorators import permission_classes
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView, TokenRefreshView, TokenVerifyView
+)
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
+from rest_framework_simplejwt.authentication import JWTAuthentication
+
 
 # GET - /api/albums
 @api_view(['GET'])
@@ -65,6 +61,7 @@ def artist_songs(request, id):
 
 # POST - /api/users/signin
 @swagger_auto_schema(method='post', request_body=UserSerializer)
+@authentication_classes([JWTAuthentication])
 @api_view(['POST'])
 def user_signin(request):
     user = Utilisateur.objects.create_superuser(
@@ -76,6 +73,8 @@ def user_signin(request):
     return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 @swagger_auto_schema(method='post', request_body=AlbumSerializer)
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
 @api_view(['POST'])
 def album_create(request):
     serializer = AlbumSerializer(data=request.data)    
@@ -86,6 +85,7 @@ def album_create(request):
 
 # POST - /api/albums/:id/songs
 @swagger_auto_schema(method='post', request_body=SongSerializer)
+@authentication_classes([JWTAuthentication])
 @api_view(['POST'])
 def song_create(request, id):
     album = generics.get_object_or_404(Album, id=id)
@@ -97,6 +97,7 @@ def song_create(request, id):
 
 # PUT - /api/artists/:id
 @swagger_auto_schema(method='put', request_body=ArtistSerializer)
+@authentication_classes([JWTAuthentication])
 @api_view(['PUT'])
 def artist_update(request, id):
     artist = generics.get_object_or_404(Artist, id=id)
@@ -108,6 +109,7 @@ def artist_update(request, id):
 
 # PUT - /api/albums/:id
 @swagger_auto_schema(method='put', request_body=AlbumSerializer)
+@authentication_classes([JWTAuthentication])
 @api_view(['PUT'])
 def album_update(request, id):
     album = generics.get_object_or_404(Album, id=id)
@@ -119,6 +121,7 @@ def album_update(request, id):
 
 # PUT - /api/genres/:id
 @swagger_auto_schema(method='put', request_body=GenreSerializer)
+@authentication_classes([JWTAuthentication])
 @api_view(['PUT'])
 def genre_update(request, id):
     genre = generics.get_object_or_404(Genre, id=id)
@@ -130,6 +133,7 @@ def genre_update(request, id):
 
 # DELETE - /api/users/:id
 @permission_classes([IsAuthenticated])
+@authentication_classes([JWTAuthentication])
 @api_view(['DELETE'])
 def user_delete(request, id):
     user = generics.get_object_or_404(Utilisateur, id=id)
@@ -138,6 +142,7 @@ def user_delete(request, id):
 
 # DELETE - /api/albums/:id
 @permission_classes([IsAuthenticated])
+@authentication_classes([JWTAuthentication])
 @api_view(['DELETE'])
 def album_delete(request, id):
     album = generics.get_object_or_404(Album, id=id)
@@ -146,6 +151,7 @@ def album_delete(request, id):
 
 # DELETE - /api/artists/:id
 @permission_classes([IsAuthenticated])
+@authentication_classes([JWTAuthentication])
 @api_view(['DELETE'])
 def artist_delete(request, id):
     artist = generics.get_object_or_404(Artist, id=id)
@@ -211,21 +217,23 @@ class MyTokenObtainPairView(ObtainJSONWebToken):
     responses={200: openapi.Response('Successful login')}
 )
 @api_view(['POST'])
+@authentication_classes([JWTAuthentication])
 def user_login(request):
     if request.method == 'POST':
         username = request.data.get('username')
         password = request.data.get('password')
         user = authenticate(request, username=username, password=password)
-        print(user)
+
         if user is not None:
             login(request, user)
-            refresh = RefreshToken.for_user(user)
-            access_token = str(refresh.access_token)
+            access_token = AccessToken.for_user(user)
+
             user_info = {
                 'email': user.email,
                 'username': user.username,
             }
-            return Response({'access_token': access_token, 'user': user_info}, status=status.HTTP_200_OK)
+
+            return Response({'access_token': str(access_token), 'user': user_info}, status=status.HTTP_200_OK)
         else:
             return Response({'message': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
     else:
